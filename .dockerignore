@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+venv
+.env
+**/__pycache__
+**/*.py[cod]
+**/db.sqlite3
+djangorest/staticfiles
+.pytest_cache
+.coverage
+htmlcov

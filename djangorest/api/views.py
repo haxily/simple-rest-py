@@ -1,48 +1,27 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import filters, viewsets
+
+from .filters import UserFilter
 from .models import User
-from .serializer import UserSerializer
-
-# Create your views here.
-
-@api_view(['GET'])
-def get_users(request):
-    user = User.objects.all()
-    serializer = UserSerializer(user, many=True)
-    return Response(serializer.data)
+from .serializers import UserSerializer
 
 
-@api_view(['POST'])
-def create_user(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_404_BAD_REQUEST)
+@extend_schema_view(
+    list=extend_schema(summary="List users", description="Paginated; supports filtering, search and ordering."),
+    create=extend_schema(summary="Create a user", description="Requires a JWT access token."),
+    retrieve=extend_schema(summary="Get a user"),
+    update=extend_schema(summary="Replace a user", description="Requires a JWT access token."),
+    partial_update=extend_schema(summary="Partially update a user", description="Requires a JWT access token."),
+    destroy=extend_schema(summary="Delete a user", description="Requires a JWT access token."),
+)
+@extend_schema(tags=["users"])
+class UserViewSet(viewsets.ModelViewSet):
+    """CRUD for users: list, create, retrieve, update, partial_update, destroy."""
 
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def user_detail(request,id):
-    try:
-        user = User.objects.get(id=id)
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if request.method == 'GET':
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-    
-    elif request.method == 'PUT':
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    elif request.method == 'DELETE':
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-        
-
-    
+    queryset = User.objects.all().order_by("id")
+    serializer_class = UserSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = UserFilter
+    search_fields = ["name"]
+    ordering_fields = ["id", "name", "age"]
