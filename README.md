@@ -49,7 +49,7 @@ Open the link in the terminal to localhost
 ## Create
 In the browser open url
 ```url
-http://localhost:<port>/api/users/create
+http://localhost:{port}/api/users/create
 ```
 Send a POST request with a JSON body for example:
 ```json
@@ -61,16 +61,16 @@ Send a POST request with a JSON body for example:
 ## GET
 You can get all users using:
 ```url
-http://localhost:<port>/api/users
+http://localhost:{port}/api/users
 ```
 Or a specific user with their id added in the url:
 ```url
-http://localhost:<port>/api/users/1
+http://localhost:{port}/api/users/1
 ```
 ## Update
 To update a user open the url:
 ```url
-http://localhost:<port>/api/users/1
+http://localhost:{port}/api/users/1
 ```
 and send a PUT request with JSON body for example:
 ```json
@@ -82,6 +82,6 @@ and send a PUT request with JSON body for example:
 ## Delete
 To delete a user open the url:
 ```url
-http://localhost:<port>/api/users/1
+http://localhost:{port}/api/users/1
 ```
 and send a DELETE request.
